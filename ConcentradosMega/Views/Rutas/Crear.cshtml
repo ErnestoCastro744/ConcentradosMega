@@ -1,0 +1,35 @@
+@model ConcentradosMega.Controllers.RutaFormViewModel
+@{ ViewData["Title"] = "Nueva ruta"; }
+
+<h1 class="h3 mb-3">Nueva ruta</h1>
+<form asp-action="Crear" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+    <div class="row g-3">
+        <div class="col-12 col-md-5">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" placeholder="Ej.: Ruta Norte" />
+            <span asp-validation-for="Nombre" class="text-danger small"></span>
+        </div>
+        <div class="col-6 col-md-3">
+            <label asp-for="Fecha" class="form-label"></label>
+            <input asp-for="Fecha" class="form-control" />
+        </div>
+        <div class="col-6 col-md-4">
+            <label asp-for="RepartidorId" class="form-label"></label>
+            <select asp-for="RepartidorId" asp-items="ViewBag.Repartidores" class="form-select">
+                <option value="">Seleccione…</option>
+            </select>
+            <span asp-validation-for="RepartidorId" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <h2 class="h5 mt-4">Pedidos confirmados sin ruta</h2>
+    <partial name="_PedidosDisponibles" model="(List<ConcentradosMega.Models.Pedido>)ViewBag.Disponibles" />
+
+    <div class="mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-mega">Crear ruta</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

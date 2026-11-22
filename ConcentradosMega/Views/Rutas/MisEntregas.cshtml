@@ -1,0 +1,65 @@
+@using ConcentradosMega.Models
+@using ConcentradosMega.Services
+@model List<RutaPedido>
+@{
+    ViewData["Title"] = "Mis entregas";
+    var todas = (bool)ViewData["Todas"]!;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Mis entregas</h1>
+    <div class="btn-group">
+        <a asp-action="MisEntregas" class="btn btn-sm @(todas ? "btn-outline-secondary" : "btn-mega")">Pendientes</a>
+        <a asp-action="MisEntregas" asp-route-todas="true" class="btn btn-sm @(todas ? "btn-mega" : "btn-outline-secondary")">Todas</a>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">@(todas ? "No tiene entregas asignadas." : "No tiene entregas pendientes.")</p>
+}
+
+<div class="row g-3">
+@foreach (var rp in Model)
+{
+    var c = rp.Pedido!.Cliente!;
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><strong>@rp.Ruta!.Nombre</strong> · @rp.Ruta.Fecha.ToString("dd/MM") · parada @rp.Orden</span>
+                <partial name="_EstadoRuta" model="rp.EstadoEntrega" />
+            </div>
+            <div class="card-body">
+                <h2 class="h6 mb-1">@c.Nombre</h2>
+                <div class="small text-muted mb-2">
+                    <i class="bi bi-geo-alt"></i> @c.Direccion
+                    @if (!string.IsNullOrEmpty(c.Telefono))
+                    { <span> · <a href="tel:@c.Telefono"><i class="bi bi-telephone"></i> @c.Telefono</a></span> }
+                </div>
+                <ul class="small mb-2 ps-3">
+                    @foreach (var d in rp.Pedido.Detalles) { <li>@d.Cantidad × @d.Producto?.Nombre</li> }
+                </ul>
+                <div class="fw-bold mb-3">Pedido #@rp.PedidoId · @FacturaService.Colones(rp.Pedido.Total)</div>
+
+                @if (rp.EstadoEntrega == EstadosEntrega.Pendiente)
+                {
+                    <form asp-action="CambiarEstado" method="post">
+                        <input type="hidden" name="rutaPedidoId" value="@rp.Id" />
+                        <input name="observacion" class="form-control form-control-sm mb-2" placeholder="Observación (obligatoria si no se entregó)" />
+                        <div class="d-flex gap-2">
+                            <button name="estado" value="@EstadosEntrega.Entregado" class="btn btn-success flex-fill" type="submit">
+                                <i class="bi bi-check-lg"></i> Entregado</button>
+                            <button name="estado" value="@EstadosEntrega.NoEntregado" class="btn btn-outline-danger flex-fill" type="submit">
+                                <i class="bi bi-x-lg"></i> No entregado</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="small text-muted">@rp.FechaEntrega?.ToString("dd/MM/yyyy HH:mm") @rp.Observacion</div>
+                }
+            </div>
+        </div>
+    </div>
+}
+</div>

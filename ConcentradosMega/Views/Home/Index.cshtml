@@ -1,0 +1,48 @@
+﻿@using ConcentradosMega.Models
+@model ConcentradosMega.Controllers.InicioViewModel
+@{ ViewData["Title"] = "Inicio"; }
+
+<h1 class="h3">Hola, @Model.Nombre</h1>
+<p class="text-muted">Rol: <span class="badge bg-mega">@Model.Rol</span></p>
+
+<div class="row g-3 mt-1">
+    @if (Model.Rol == Roles.Repartidor)
+    {
+        <div class="col-12 col-md-6 col-lg-4">
+            <a asp-controller="Rutas" asp-action="MisEntregas" class="card text-decoration-none h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="display-6 fw-bold text-mega">@Model.EntregasPendientes</div>
+                    <div>Entregas pendientes</div>
+                </div>
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm"><div class="card-body">
+                <div class="display-6 fw-bold text-mega">@Model.PedidosPendientes</div>
+                <div>Pedidos pendientes de confirmar</div>
+            </div></div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a asp-controller="Facturas" asp-action="Index" class="card text-decoration-none h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="display-6 fw-bold text-mega">@Model.VentasSinFactura</div>
+                    <div>Ventas sin factura</div>
+                </div>
+            </a>
+        </div>
+        @if (Model.Rol == Roles.Administrador)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <a asp-controller="Rutas" asp-action="Crear" class="card text-decoration-none h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="display-6 fw-bold text-mega">@Model.PedidosSinRuta</div>
+                        <div>Pedidos confirmados sin ruta</div>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+</div>

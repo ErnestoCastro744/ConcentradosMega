@@ -1,0 +1,76 @@
+@using ConcentradosMega.Models
+@using ConcentradosMega.Services
+@model Ruta
+@{
+    ViewData["Title"] = Model.Nombre;
+    var disponibles = (List<Pedido>)ViewBag.Disponibles;
+    var volver = Url.Action("Detalle", new { id = Model.Id });
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">@Model.Nombre <partial name="_EstadoRuta" model="Model.Estado" /></h1>
+        <div class="text-muted">@Model.Fecha.ToString("dd/MM/yyyy") · Repartidor: @Model.Repartidor?.NombreCompleto</div>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<h2 class="h5">Entregas</h2>
+@if (Model.Pedidos.Count == 0)
+{
+    <p class="text-muted">Esta ruta todavía no tiene pedidos.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead class="table-light"><tr><th>#</th><th>Pedido</th><th>Cliente</th><th class="text-end">Total</th><th>Entrega</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var rp in Model.Pedidos.OrderBy(p => p.Orden))
+            {
+                <tr>
+                    <td>@rp.Orden</td>
+                    <td>#@rp.PedidoId</td>
+                    <td>@rp.Pedido!.Cliente!.Nombre<div class="small text-muted">@rp.Pedido.Cliente.Direccion</div></td>
+                    <td class="text-end">@FacturaService.Colones(rp.Pedido.Total)</td>
+                    <td>
+                        <partial name="_EstadoRuta" model="rp.EstadoEntrega" />
+                        @if (!string.IsNullOrEmpty(rp.Observacion)) { <div class="small text-muted">@rp.Observacion</div> }
+                    </td>
+                    <td class="text-end">
+                        @if (rp.EstadoEntrega == EstadosEntrega.Pendiente)
+                        {
+                            <form asp-action="Quitar" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="hidden" name="rutaPedidoId" value="@rp.Id" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit" title="Quitar de la ruta"><i class="bi bi-x-lg"></i></button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="CambiarEstado" method="post" class="d-inline">
+                                <input type="hidden" name="rutaPedidoId" value="@rp.Id" />
+                                <input type="hidden" name="estado" value="@EstadosEntrega.Pendiente" />
+                                <input type="hidden" name="volver" value="@volver" />
+                                <button class="btn btn-sm btn-outline-secondary" type="submit">Reabrir</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.Estado != EstadosRuta.Finalizada)
+{
+    <h2 class="h5 mt-4">Agregar pedidos</h2>
+    <form asp-action="Asignar" asp-route-id="@Model.Id" method="post">
+        <partial name="_PedidosDisponibles" model="disponibles" />
+        @if (disponibles.Count > 0)
+        {
+            <button type="submit" class="btn btn-mega mt-3">Asignar seleccionados</button>
+        }
+    </form>
+}

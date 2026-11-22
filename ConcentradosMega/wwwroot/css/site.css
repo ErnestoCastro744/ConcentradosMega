@@ -1,0 +1,28 @@
+:root {
+  --mega: #1E6B3A;
+  --mega-oscuro: #15502b;
+}
+
+html { font-size: 15px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
+
+.bg-mega { background-color: var(--mega) !important; }
+.text-mega { color: var(--mega) !important; }
+
+.btn-mega {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--mega);
+  --bs-btn-border-color: var(--mega);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--mega-oscuro);
+  --bs-btn-hover-border-color: var(--mega-oscuro);
+  --bs-btn-active-bg: var(--mega-oscuro);
+  --bs-btn-active-color: #fff;
+}
+
+.btn:focus, .btn:active:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(30, 107, 58, .5);
+}
+
+a.card { color: inherit; transition: transform .1s; }
+a.card:hover { transform: translateY(-2px); }

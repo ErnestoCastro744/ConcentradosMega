@@ -1,0 +1,59 @@
+@using ConcentradosMega.Services
+@model List<ConcentradosMega.Models.Venta>
+@{ ViewData["Title"] = "Ventas y facturas"; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Ventas y facturas</h1>
+    <form method="get" class="d-flex gap-2">
+        <input name="buscar" value="@ViewData["Buscar"]" class="form-control" placeholder="Cliente o cédula" />
+        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">No hay ventas registradas.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr><th>Venta</th><th>Fecha</th><th>Cliente</th><th class="text-end">Total</th><th>Factura</th><th></th></tr>
+            </thead>
+            <tbody>
+            @foreach (var v in Model)
+            {
+                <tr>
+                    <td>#@v.Id <span class="text-muted small">(pedido #@v.PedidoId)</span></td>
+                    <td>@v.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@v.Pedido!.Cliente!.Nombre</td>
+                    <td class="text-end">@FacturaService.Colones(v.Total)</td>
+                    <td>
+                        @if (v.Factura != null)
+                        { <span class="badge bg-success">@v.Factura.Numero</span> }
+                        else
+                        { <span class="badge bg-secondary">Sin factura</span> }
+                    </td>
+                    <td class="text-end text-nowrap">
+                        @if (v.Factura != null)
+                        {
+                            <a asp-action="Ver" asp-route-id="@v.Factura.Id" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Ver</a>
+                            <a asp-action="Ver" asp-route-id="@v.Factura.Id" asp-route-descargar="true" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-download"></i></a>
+                        }
+                        else
+                        {
+                            <form asp-action="Generar" method="post" class="d-inline">
+                                <input type="hidden" name="ventaId" value="@v.Id" />
+                                <button class="btn btn-sm btn-mega" type="submit"><i class="bi bi-file-earmark-pdf"></i> Generar factura</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

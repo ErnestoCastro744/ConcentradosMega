@@ -1,0 +1,77 @@
+﻿@using ConcentradosMega.Models
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Concentrados Mega</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-mega shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-truck"></i> Concentrados Mega
+                </a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+                            aria-controls="menu" aria-expanded="false" aria-label="Abrir menú">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="menu">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
+
+                            @if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Vendedor))
+                            {
+                                @* Módulos de Ian, Dilan, Brandon y Ernesto: agregar aquí sus enlaces *@
+                                <li class="nav-item"><a class="nav-link" asp-controller="Facturas" asp-action="Index">Ventas y facturas</a></li>
+                            }
+                            @if (User.IsInRole(Roles.Administrador))
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="Rutas" asp-action="Index">Rutas</a></li>
+                            }
+                            @if (User.IsInRole(Roles.Repartidor))
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="Rutas" asp-action="MisEntregas">Mis entregas</a></li>
+                            }
+                        </ul>
+                        <div class="d-flex align-items-center gap-2 text-white-50 small">
+                            <span><i class="bi bi-person-circle"></i> @User.Identity!.Name</span>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-light">Salir</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4 flex-grow-1">
+        @if (TempData["Ok"] is string ok)
+        {
+            <div class="alert alert-success alert-dismissible fade show">@ok
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>
+        }
+        @if (TempData["Error"] is string err)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">@err
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="border-top py-3 text-muted small">
+        <div class="container">&copy; @DateTime.Now.Year Concentrados Mega</div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
