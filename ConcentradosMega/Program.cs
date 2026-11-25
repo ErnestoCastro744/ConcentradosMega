@@ -36,6 +36,7 @@ builder.Services.AddControllersWithViews(o =>
 
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<RutaService>();
+builder.Services.AddScoped<PagoService>();
 
 var app = builder.Build();
 

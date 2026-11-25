@@ -1,0 +1,81 @@
+﻿@model ConcentradosMega.Services.DetalleVentaVm
+@{
+    ViewData["Title"] = $"Pagos de la venta #{Model.Venta.VentaId}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Venta #@Model.Venta.VentaId <small class="text-muted">@Model.Venta.Cliente</small></h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Volver</a>
+</div>
+
+@if (TempData["PagoOk"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+@if (TempData["PagoError"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<div class="row g-2 mb-3 text-center">
+    <div class="col-4"><div class="border rounded p-2"><small class="text-muted d-block">Total</small><strong>₡@Model.Venta.Total.ToString("N2")</strong></div></div>
+    <div class="col-4"><div class="border rounded p-2"><small class="text-muted d-block">Pagado (aprobado)</small><strong>₡@Model.Venta.Pagado.ToString("N2")</strong></div></div>
+    <div class="col-4"><div class="border rounded p-2"><small class="text-muted d-block">Saldo</small><strong>₡@Model.Venta.Saldo.ToString("N2")</strong></div></div>
+</div>
+
+@if (Model.Venta.Saldo > 0)
+{
+    <h2 class="h6">Registrar pago o abono</h2>
+    <form asp-action="Registrar" method="post" class="row g-2 align-items-end mb-4">
+        <input type="hidden" name="ventaId" value="@Model.Venta.VentaId" />
+        <div class="col-md-3">
+            <label class="form-label">Monto (₡)</label>
+            <input name="monto" type="number" step="1" min="1" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Método</label>
+            <select name="metodo" class="form-select" required>
+                @foreach (var m in ConcentradosMega.Services.PagoService.Metodos)
+                {
+                    <option value="@m">@m</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Referencia <small class="text-muted">(obligatoria en SINPE y transferencia)</small></label>
+            <input name="referencia" maxlength="50" class="form-control" />
+        </div>
+        <div class="col-md-2 d-grid">
+            <button class="btn btn-success">Registrar</button>
+        </div>
+    </form>
+}
+
+<h2 class="h6">Historial de pagos</h2>
+@if (!Model.Pagos.Any())
+{
+    <p class="text-muted">Esta venta todavía no tiene pagos.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr><th>Fecha</th><th>Método</th><th>Referencia</th><th class="text-end">Monto</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Pagos)
+                {
+                    var clase = p.Estado == "Aprobado" ? "bg-success" : p.Estado == "Rechazado" ? "bg-danger" : "bg-warning text-dark";
+                    <tr>
+                        <td>@p.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@p.Metodo</td>
+                        <td>@(p.Referencia ?? "-")</td>
+                        <td class="text-end">₡@p.Monto.ToString("N2")</td>
+                        <td><span class="badge @clase">@p.Estado</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

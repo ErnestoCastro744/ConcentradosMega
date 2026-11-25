@@ -30,10 +30,12 @@
                             {
                                 @* Módulos de Ian, Dilan, Brandon y Ernesto: agregar aquí sus enlaces *@
                                 <li class="nav-item"><a class="nav-link" asp-controller="Facturas" asp-action="Index">Ventas y facturas</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Pagos" asp-action="Index">Pagos</a></li>
                             }
                             @if (User.IsInRole(Roles.Administrador))
                             {
                                 <li class="nav-item"><a class="nav-link" asp-controller="Rutas" asp-action="Index">Rutas</a></li>
+                                
                             }
                             @if (User.IsInRole(Roles.Repartidor))
                             {
