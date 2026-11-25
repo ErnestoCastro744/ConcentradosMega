@@ -1,0 +1,58 @@
+﻿@model List<ConcentradosMega.Services.PagoPendienteVm>
+@{
+    ViewData["Title"] = "Pagos pendientes";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Pagos pendientes de aprobación</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Volver</a>
+</div>
+
+@if (TempData["PagoOk"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+@if (TempData["PagoError"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay pagos pendientes.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr><th>Fecha</th><th>Venta</th><th>Cliente</th><th>Método</th><th>Referencia</th><th class="text-end">Monto</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td><a asp-action="Venta" asp-route-id="@p.VentaId">#@p.VentaId</a></td>
+                        <td>@p.Cliente</td>
+                        <td>@p.Metodo</td>
+                        <td>@(p.Referencia ?? "-")</td>
+                        <td class="text-end">₡@p.Monto.ToString("N2")</td>
+                        <td class="text-end text-nowrap">
+                            <form asp-action="Resolver" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@p.PagoId" />
+                                <input type="hidden" name="aprobar" value="true" />
+                                <button class="btn btn-success btn-sm">Aprobar</button>
+                            </form>
+                            <form asp-action="Resolver" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@p.PagoId" />
+                                <input type="hidden" name="aprobar" value="false" />
+                                <button class="btn btn-outline-danger btn-sm">Rechazar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

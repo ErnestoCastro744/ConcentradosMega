@@ -1,0 +1,65 @@
+﻿@model List<ConcentradosMega.Services.VentaSaldoVm>
+@{
+    ViewData["Title"] = "Pagos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Pagos y saldos</h1>
+    @if (User.IsInRole("Administrador"))
+    {
+        <a asp-action="Pendientes" class="btn btn-outline-success btn-sm">Pagos pendientes</a>
+    }
+</div>
+
+@if (TempData["PagoOk"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay ventas registradas.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Venta</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-end">Pagado</th>
+                    <th class="text-end">Saldo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model)
+                {
+                    <tr>
+                        <td><strong>#@v.VentaId</strong> <small class="text-muted">(pedido #@v.PedidoId)</small></td>
+                        <td>@v.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@v.Cliente</td>
+                        <td class="text-end">₡@v.Total.ToString("N2")</td>
+                        <td class="text-end">₡@v.Pagado.ToString("N2")</td>
+                        <td class="text-end">
+                            @if (v.Saldo > 0)
+                            {
+                                <span class="badge bg-warning text-dark">₡@v.Saldo.ToString("N2")</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Pagada</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Venta" asp-route-id="@v.VentaId" class="btn btn-outline-primary btn-sm">Ver pagos</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
