@@ -69,4 +69,4 @@ dotnet test
 | Clientes y Productos | Ian | Pendiente |
 | Pedidos y Ventas (ECU-01) | Dilan | Pendiente |
 | Inventario y pedido sin conexión (ECU-05) | Brandon | Pendiente |
-| Pagos (ECU-03) | Ernesto | Pendiente |
+| Pagos (ECU-03) | Ernesto | Hecho |
