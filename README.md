@@ -66,7 +66,7 @@ dotnet test
 | Base, login, roles, layout | Luis | Hecho (adelantado por Zahid, revisar) |
 | Base de datos, entidades, datos de prueba | Ernesto | Hecho (adelantado por Zahid, revisar) |
 | Factura PDF (ECU-02) y Rutas (ECU-04) | Zahid | Hecho |
-| Clientes y Productos | Ian | Pendiente |
+| Clientes y Productos | Ian | Hecho |
 | Pedidos y Ventas (ECU-01) | Dilan | Pendiente |
 | Inventario y pedido sin conexión (ECU-05) | Brandon | Pendiente |
 | Pagos (ECU-03) | Ernesto | Hecho |
