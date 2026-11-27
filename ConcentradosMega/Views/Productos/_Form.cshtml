@@ -1,0 +1,32 @@
+﻿@using System.Globalization
+@model ConcentradosMega.Models.Producto
+
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <label asp-for="Codigo" class="form-label">Código</label>
+        <input asp-for="Codigo" class="form-control" maxlength="20" />
+        <span asp-validation-for="Codigo" class="text-danger small"></span>
+    </div>
+    <div class="col-md-9">
+        <label asp-for="Nombre" class="form-label">Nombre</label>
+        <input asp-for="Nombre" class="form-control" maxlength="100" />
+        <span asp-validation-for="Nombre" class="text-danger small"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Descripcion" class="form-label">Descripción</label>
+        <input asp-for="Descripcion" class="form-control" maxlength="250" />
+        <span asp-validation-for="Descripcion" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label" for="Precio">Precio (₡)</label>
+        <input id="Precio" name="Precio" type="number" step="1" min="1" class="form-control"
+               value="@(Model.Precio > 0 ? Model.Precio.ToString("0", CultureInfo.InvariantCulture) : "")" />
+        <span asp-validation-for="Precio" class="text-danger small"></span>
+        <small class="text-muted">Un cambio de precio no afecta los pedidos ya registrados.</small>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="StockMinimo" class="form-label">Stock mínimo</label>
+        <input asp-for="StockMinimo" type="number" min="0" class="form-control" />
+        <span asp-validation-for="StockMinimo" class="text-danger small"></span>
+    </div>
+</div>

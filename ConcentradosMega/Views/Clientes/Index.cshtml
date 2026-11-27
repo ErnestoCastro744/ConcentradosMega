@@ -1,0 +1,71 @@
+﻿@model List<ConcentradosMega.Models.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+    var q = ViewBag.Q as string;
+    var inactivos = (bool)ViewBag.Inactivos;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Clientes</h1>
+    <a asp-action="Create" class="btn btn-success btn-sm"><i class="bi bi-plus-lg"></i> Nuevo cliente</a>
+</div>
+
+<form method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-md-6">
+        <input name="q" value="@q" class="form-control" placeholder="Buscar por nombre o cédula" />
+    </div>
+    <div class="col-auto">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="inactivos" name="inactivos" value="true" @(inactivos ? "checked" : "") />
+            <label class="form-check-label" for="inactivos">Incluir inactivos</label>
+        </div>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary btn-sm">Buscar</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No se encontraron clientes.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr><th>Cédula</th><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.Cedula</td>
+                        <td>@c.Nombre</td>
+                        <td>@(c.Telefono ?? "-")</td>
+                        <td>@(c.Direccion ?? "-")</td>
+                        <td>
+                            @if (c.Estado)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactivo</span>
+                            }
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-outline-primary btn-sm">Editar</a>
+                            <form asp-action="CambiarEstado" asp-route-id="@c.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Confirmar el cambio de estado de este cliente?');">
+                                <button class="btn btn-sm @(c.Estado ? "btn-outline-danger" : "btn-outline-success")">
+                                    @(c.Estado ? "Desactivar" : "Reactivar")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
