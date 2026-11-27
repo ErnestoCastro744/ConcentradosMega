@@ -1,0 +1,104 @@
+﻿@model List<ConcentradosMega.Models.Producto>
+@{
+    ViewData["Title"] = "Productos";
+    var q = ViewBag.Q as string;
+    var orden = ViewBag.Orden as string ?? "nombre";
+    var inactivos = (bool)ViewBag.Inactivos;
+    var esAdmin = (bool)ViewBag.EsAdmin;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Catálogo de productos</h1>
+    @if (esAdmin)
+    {
+        <a asp-action="Create" class="btn btn-success btn-sm"><i class="bi bi-plus-lg"></i> Nuevo producto</a>
+    }
+</div>
+
+<form method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-md-5">
+        <input name="q" value="@q" class="form-control" placeholder="Buscar por nombre o código" />
+    </div>
+    <div class="col-md-3">
+        <select name="orden" class="form-select">
+            <option value="nombre" selected="@(orden == "nombre")">Ordenar por nombre</option>
+            <option value="precio" selected="@(orden == "precio")">Precio: menor a mayor</option>
+            <option value="precio_desc" selected="@(orden == "precio_desc")">Precio: mayor a menor</option>
+            <option value="codigo" selected="@(orden == "codigo")">Ordenar por código</option>
+        </select>
+    </div>
+    @if (esAdmin)
+    {
+        <div class="col-auto">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="inactivos" name="inactivos" value="true" @(inactivos ? "checked" : "") />
+                <label class="form-check-label" for="inactivos">Incluir inactivos</label>
+            </div>
+        </div>
+    }
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary btn-sm">Aplicar</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No se encontraron productos.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th class="text-end">Precio</th>
+                    <th class="text-end">Stock mínimo</th>
+                    <th>Estado</th>
+                    @if (esAdmin)
+                    {
+                        <th></th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.Codigo</td>
+                        <td>@p.Nombre @if (!string.IsNullOrEmpty(p.Descripcion)) {
+                            <small class="d-block text-muted">@p.Descripcion</small>
+                        }
+                    </td>
+                    <td class="text-end">₡@p.Precio.ToString("N2")</td>
+                    <td class="text-end">@p.StockMinimo</td>
+                    <td>
+                        @if (p.Estado)
+                        {
+                            <span class="badge bg-success">Activo</span>
+                        }
+                        else
+                        {
+
+                            <span class="badge bg-secondary">Inactivo</span>
+                        }
+                    </td>
+                    @if (esAdmin)
+                    {
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-primary btn-sm">Editar</a>
+                            <form asp-action="CambiarEstado" asp-route-id="@p.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Confirmar el cambio de estado de este producto?');">
+                                <button class="btn btn-sm @(p.Estado ? "btn-outline-danger" : "btn-outline-success")">
+                                    @(p.Estado ? "Desactivar" : "Reactivar")
+                                </button>
+                            </form>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}

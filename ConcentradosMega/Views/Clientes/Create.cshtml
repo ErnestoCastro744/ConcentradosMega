@@ -1,0 +1,12 @@
+﻿@model ConcentradosMega.Models.Cliente
+@{
+    ViewData["Title"] = "Nuevo cliente";
+}
+
+<h1 class="h4 mb-3">Nuevo cliente</h1>
+
+<form asp-action="Create" method="post">
+    <partial name="_Form" model="Model" />
+    <button class="btn btn-success">Guardar</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+</form>
